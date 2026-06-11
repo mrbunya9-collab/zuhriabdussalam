@@ -370,16 +370,17 @@
     <!-- Right — Profile -->
     <div class="flex flex-col items-center gap-6" data-aos="zoom-in" data-aos-delay="300">
       <div class="profile-frame w-64 h-64 md:w-80 md:h-80 glow-em-lg float-badge">
-        <div class="profile-inner w-full h-full bg-charcoal-3 flex items-center justify-center">
-          <!-- Profile image updated to use profile-photo.jpg -->
-          <img 
-            src="profile-photo.jpg" 
-            alt="Foto profil" 
+        <div class="profile-inner w-full h-full bg-charcoal-3 flex items-center justify-center overflow-hidden">
+          <!-- Foto profil: gunakan file profile-photo.jpg -->
+          <img
+            src="profile-photo.jpg"
+            alt="Foto profil"
             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
           >
         </div>
       </div>
 
+      <!-- Floating info badges -->
       <div class="flex gap-4 flex-wrap justify-center">
         <div class="bg-charcoal-3 border border-emerald/20 rounded-xl px-4 py-3 text-center" style="animation: floatUp 3.2s ease-in-out infinite;">
           <p class="font-mono text-xs text-emerald">📍 Lokasi</p>
