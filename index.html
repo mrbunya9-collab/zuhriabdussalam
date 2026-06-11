@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zuhri Abdussalam Ashari — Portfolio</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS -->
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: '#0e0e10',
+            'charcoal-2': '#16161a',
+            'charcoal-3': '#1e1e24',
+            midnight: '#0d1b2a',
+            'mid-2': '#112240',
+            emerald: '#00c896',
+            'em-dim': '#009e78',
+            'em-glow': '#00ffbb',
+          },
+          fontFamily: {
+            mono: ['Space Mono', 'monospace'],
+            display: ['Syne', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --em: #00c896;
+      --em-glow: #00ffbb;
+      --charcoal: #0e0e10;
+      --c2: #16161a;
+      --c3: #1e1e24;
+      --mid: #0d1b2a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--charcoal);
+      color: #cdd6f4;
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Custom Cursor ── */
+    #cursor {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--em-glow);
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s linear;
+      mix-blend-mode: screen;
+      box-shadow: 0 0 16px 4px var(--em-glow);
+    }
+    #cursor-ring {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,255,187,0.45);
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    }
+    body:has(a:hover) #cursor-ring,
+    body:has(button:hover) #cursor-ring {
+      width: 56px; height: 56px;
+      border-color: var(--em-glow);
+      opacity: 0.6;
+    }
+
+    /* ── Canvas BG ── */
+    #bg-canvas {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--charcoal); }
+    ::-webkit-scrollbar-thumb { background: var(--em); border-radius: 2px; }
+
+    /* ── Navbar ── */
+    nav { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+
+    /* ── Glow utilities ── */
+    .glow-em { box-shadow: 0 0 20px 4px rgba(0,200,150,0.35); }
+    .glow-em-lg { box-shadow: 0 0 40px 10px rgba(0,200,150,0.25); }
+    .text-glow { text-shadow: 0 0 16px rgba(0,255,187,0.7); }
+
+    /* ── Typing cursor ── */
+    .typing-cursor::after {
+      content: '|';
+      animation: blink 0.75s step-end infinite;
+      color: var(--em-glow);
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Profile frame ── */
+    .profile-frame {
+      position: relative;
+      padding: 4px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--em), transparent 60%);
+      animation: rotateGrad 4s linear infinite;
+    }
+    @keyframes rotateGrad {
+      0%   { background: linear-gradient(0deg,   var(--em), transparent 60%); }
+      25%  { background: linear-gradient(90deg,  var(--em), transparent 60%); }
+      50%  { background: linear-gradient(180deg, var(--em), transparent 60%); }
+      75%  { background: linear-gradient(270deg, var(--em), transparent 60%); }
+      100% { background: linear-gradient(360deg, var(--em), transparent 60%); }
+    }
+    .profile-inner {
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--c2);
+    }
+
+    /* ── Skill bar ── */
+    .skill-bar-fill {
+      height: 100%;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, var(--em), var(--em-glow));
+      width: 0%;
+      transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 0 10px rgba(0,200,150,0.6);
+    }
+
+    /* ── Project card ── */
+    .proj-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0,200,150,0.12);
+      border-radius: 16px;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      background: var(--c2);
+    }
+    .proj-card:hover {
+      transform: translateY(-8px) scale(1.015);
+      box-shadow: 0 0 40px 8px rgba(0,200,150,0.2);
+      border-color: rgba(0,200,150,0.5);
+    }
+    .proj-card .proj-img {
+      transition: transform 0.5s ease;
+    }
+    .proj-card:hover .proj-img { transform: scale(1.08); }
+    .proj-card .tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,200,150,0.4);
+      color: var(--em);
+      background: rgba(0,200,150,0.08);
+    }
+
+    /* ── Contact form ── */
+    .form-input {
+      background: var(--c3);
+      border: 1px solid rgba(0,200,150,0.2);
+      border-radius: 10px;
+      color: #cdd6f4;
+      padding: 14px 18px;
+      width: 100%;
+      font-family: 'Syne', sans-serif;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .form-input:focus {
+      border-color: var(--em);
+      box-shadow: 0 0 0 3px rgba(0,200,150,0.15);
+    }
+    .form-input::placeholder { color: #555567; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      color: var(--em);
+      text-transform: uppercase;
+    }
+
+    /* ── Scan line effect ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,0.04) 2px,
+        rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── Gradient mesh overlay ── */
+    .mesh {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 15% 30%, rgba(0,200,150,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 70%, rgba(13,27,42,0.5) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Floating badge ── */
+    .float-badge {
+      animation: floatUp 3s ease-in-out infinite;
+    }
+    @keyframes floatUp {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+
+    /* ── Mobile menu ── */
+    #mobile-menu {
+      transition: max-height 0.4s ease, opacity 0.4s ease;
+      max-height: 0; overflow: hidden; opacity: 0;
+    }
+    #mobile-menu.open { max-height: 400px; opacity: 1; }
+
+    /* ── Btn primary ── */
+    .btn-primary {
+      background: var(--em);
+      color: var(--charcoal);
+      font-weight: 700;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      transition: box-shadow 0.3s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 24px rgba(0,200,150,0.55);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      border: 1px solid var(--em);
+      color: var(--em);
+      font-weight: 600;
+      padding: 11px 26px;
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-outline:hover {
+      background: rgba(0,200,150,0.1);
+      box-shadow: 0 0 18px rgba(0,200,150,0.3);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Particle Canvas -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ════════════════════════════════════ NAVBAR ════════════════════════════════════ -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-charcoal/80 border-b border-emerald/10">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#hero" class="font-mono text-emerald text-sm font-bold tracking-widest glow-em" style="text-shadow:0 0 12px rgba(0,200,150,0.6)">
+      &lt;ZAA /&gt;
+    </a>
+    <!-- Desktop -->
+    <ul class="hidden md:flex gap-8 text-sm font-display font-semibold text-gray-400">
+      <li><a href="#about"    class="hover:text-emerald transition-colors duration-200">Tentang</a></li>
+      <li><a href="#skills"   class="hover:text-emerald transition-colors duration-200">Keahlian</a></li>
+      <li><a href="#projects" class="hover:text-emerald transition-colors duration-200">Proyek</a></li>
+      <li><a href="#contact"  class="hover:text-emerald transition-colors duration-200">Kontak</a></li>
+    </ul>
+    <a href="#contact" class="hidden md:block btn-primary text-xs">Hire Me</a>
+    <!-- Hamburger -->
+    <button id="hamburger" class="md:hidden text-emerald" aria-label="menu">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+  </div>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden px-6 pb-4">
+    <ul class="flex flex-col gap-4 text-sm font-display font-semibold text-gray-400">
+      <li><a href="#about"    class="hover:text-emerald transition-colors" onclick="closeMobile()">Tentang</a></li>
+      <li><a href="#skills"   class="hover:text-emerald transition-colors" onclick="closeMobile()">Keahlian</a></li>
+      <li><a href="#projects" class="hover:text-emerald transition-colors" onclick="closeMobile()">Proyek</a></li>
+      <li><a href="#contact"  class="hover:text-emerald transition-colors" onclick="closeMobile()">Kontak</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════ HERO ════════════════════════════════════ -->
+<section id="hero" class="relative min-h-screen flex items-center overflow-hidden pt-20">
+  <div class="mesh"></div>
+  <div class="max-w-6xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center w-full py-20">
+
+    <!-- Left -->
+    <div>
+      <p class="section-label mb-4" data-aos="fade-right" data-aos-delay="100">// Hello World</p>
+
+      <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4" data-aos="fade-right" data-aos-delay="200">
+        Hi, I'm <br/>
+        <span id="typed-name" class="text-emerald typing-cursor text-glow"></span>
+      </h1>
+
+      <h2 class="font-mono text-lg md:text-xl text-gray-400 mb-6" data-aos="fade-right" data-aos-delay="400">
+        Creative Developer <span class="text-emerald">&</span> Designer
+      </h2>
+
+      <p class="text-gray-500 text-base md:text-lg leading-relaxed mb-10 max-w-lg" data-aos="fade-right" data-aos-delay="500">
+        Mahasiswa Sistem Informasi yang berfokus pada inovasi
+        <span class="text-emerald font-semibold">UI/UX</span> dan
+        <span class="text-emerald font-semibold">Web Development</span> —
+        membangun solusi digital yang fungsional dan estetis.
+      </p>
+
+      <div class="flex flex-wrap gap-4" data-aos="fade-up" data-aos-delay="600">
+        <a href="#projects" class="btn-primary">Lihat Proyek</a>
+        <a href="#contact"  class="btn-outline">Hubungi Saya</a>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-12 flex gap-10" data-aos="fade-up" data-aos-delay="700">
+        <div>
+          <p class="font-mono text-3xl font-bold text-emerald text-glow">3+</p>
+          <p class="text-gray-500 text-sm">Proyek Selesai</p>
+        </div>
+        <div>
+          <p class="font-mono text-3xl font-bold text-emerald text-glow">2+</p>
+          <p class="text-gray-500 text-sm">Tahun Belajar</p>
+        </div>
+        <div>
+          <p class="font-mono text-3xl font-bold text-emerald text-glow">∞</p>
+          <p class="text-gray-500 text-sm">Semangat Belajar</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right — Profile -->
+    <div class="flex flex-col items-center gap-6" data-aos="zoom-in" data-aos-delay="300">
+      <div class="profile-frame w-64 h-64 md:w-80 md:h-80 glow-em-lg float-badge">
+        <div class="profile-inner w-full h-full bg-charcoal-3 flex items-center justify-center">
+          <!-- Placeholder avatar -->
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="60" cy="45" r="28" fill="#1e1e24" stroke="#00c896" stroke-width="1.5"/>
+            <path d="M10 110 Q60 75 110 110" fill="#1e1e24" stroke="#00c896" stroke-width="1.5"/>
+            <circle cx="60" cy="45" r="18" fill="#00c896" fill-opacity="0.15"/>
+            <text x="60" y="52" text-anchor="middle" fill="#00c896" font-size="22" font-family="Space Mono" font-weight="700">ZA</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Floating info badges -->
+      <div class="flex gap-4 flex-wrap justify-center">
+        <div class="bg-charcoal-3 border border-emerald/20 rounded-xl px-4 py-3 text-center" style="animation: floatUp 3.2s ease-in-out infinite;">
+          <p class="font-mono text-xs text-emerald">📍 Lokasi</p>
+          <p class="font-display text-sm font-bold text-white mt-1">Cilacap, Jateng</p>
+        </div>
+        <div class="bg-charcoal-3 border border-emerald/20 rounded-xl px-4 py-3 text-center" style="animation: floatUp 2.8s ease-in-out infinite 0.4s;">
+          <p class="font-mono text-xs text-emerald">🎓 Status</p>
+          <p class="font-display text-sm font-bold text-white mt-1">Mahasiswa SI</p>
+        </div>
+        <div class="bg-charcoal-3 border border-emerald/20 rounded-xl px-4 py-3 text-center" style="animation: floatUp 3.5s ease-in-out infinite 0.8s;">
+          <p class="font-mono text-xs text-emerald">💡 Fokus</p>
+          <p class="font-display text-sm font-bold text-white mt-1">IoT & UI/UX</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+    <p class="font-mono text-xs text-gray-500 tracking-widest">SCROLL</p>
+    <div class="w-px h-10 bg-gradient-to-b from-emerald to-transparent animate-pulse"></div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ ABOUT ════════════════════════════════════ -->
+<section id="about" class="relative py-24 bg-charcoal-2">
+  <div class="mesh"></div>
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+
+    <div class="text-center mb-16" data-aos="fade-up">
+      <p class="section-label mb-3">// 01. About</p>
+      <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white">Tentang <span class="text-emerald">Saya</span></h2>
+      <div class="w-16 h-px bg-emerald mx-auto mt-4 rounded-full glow-em"></div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-14 items-center">
+      <!-- Left: Text -->
+      <div data-aos="fade-right" data-aos-delay="150">
+        <p class="text-gray-400 text-base md:text-lg leading-relaxed mb-5">
+          Halo! Saya <span class="text-white font-bold">Zuhri Abdussalam Ashari</span>, mahasiswa
+          <span class="text-emerald font-semibold">Sistem Informasi</span> di
+          <span class="text-emerald font-semibold">Universitas Komputama</span>, Cilacap — Jawa Tengah.
+        </p>
+        <p class="text-gray-400 text-base leading-relaxed mb-5">
+          Saya berkomitmen untuk menggabungkan estetika desain dan kemampuan teknis guna menghadirkan
+          produk digital yang tidak hanya <em>bekerja dengan baik</em>, tetapi juga <em>terasa menyenangkan</em>
+          saat digunakan.
+        </p>
+        <!-- Chips -->
+        <div class="flex flex-wrap gap-2">
+          <span class="tag">HTML/CSS/JS</span>
+          <span class="tag">Figma</span>
+          <span class="tag">Laravel</span>
+          <span class="tag">ESP32 / IoT</span>
+          <span class="tag">Next.js</span>
+        </div>
+      </div>
+
+      <!-- Right: Info cards -->
+      <div class="grid grid-cols-2 gap-4" data-aos="fade-left" data-aos-delay="200">
+        <div class="bg-charcoal-3 border border-emerald/15 rounded-2xl p-5 hover:border-emerald/40 transition-colors">
+          <div class="text-2xl mb-2">🏫</div>
+          <p class="font-mono text-xs text-emerald mb-1">Universitas</p>
+          <p class="font-display font-bold text-white text-sm">Universitas Komputama</p>
+        </div>
+        <div class="bg-charcoal-3 border border-emerald/15 rounded-2xl p-5 hover:border-emerald/40 transition-colors">
+          <div class="text-2xl mb-2">📍</div>
+          <p class="font-mono text-xs text-emerald mb-1">Domisili</p>
+          <p class="font-display font-bold text-white text-sm">Cilacap, Jawa Tengah</p>
+        </div>
+        <div class="bg-charcoal-3 border border-emerald/15 rounded-2xl p-5 hover:border-emerald/40 transition-colors">
+          <div class="text-2xl mb-2">⚡</div>
+          <p class="font-mono text-xs text-emerald mb-1">Prodi</p>
+          <p class="font-display font-bold text-white text-sm">Sistem Informasi</p>
+        </div>
+        <div class="bg-charcoal-3 border border-emerald/15 rounded-2xl p-5 hover:border-emerald/40 transition-colors">
+          <div class="text-2xl mb-2">🌱</div>
+          <p class="font-mono text-xs text-emerald mb-1">Minat</p>
+          <p class="font-display font-bold text-white text-sm">Tech for Agriculture</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ SKILLS ════════════════════════════════════ -->
+<section id="skills" class="relative py-24 bg-charcoal">
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+
+    <div class="text-center mb-16" data-aos="fade-up">
+      <p class="section-label mb-3">// 02. Skills</p>
+      <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white">Keahlian <span class="text-emerald">Saya</span></h2>
+      <div class="w-16 h-px bg-emerald mx-auto mt-4 rounded-full glow-em"></div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+
+      <!-- Skill Card 1 -->
+      <div class="bg-charcoal-2 border border-emerald/12 rounded-2xl p-8 hover:border-emerald/35 transition-all group"
+           data-aos="fade-up" data-aos-delay="100">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-12 h-12 rounded-xl bg-emerald/10 border border-emerald/25 flex items-center justify-center text-2xl group-hover:bg-emerald/20 transition-colors">🎨</div>
+          <div>
+            <h3 class="font-display font-bold text-white">UI/UX Design</h3>
+            <p class="font-mono text-xs text-emerald">Figma · Prototyping</p>
+          </div>
+        </div>
+        <div class="mb-2 flex justify-between items-center">
+          <span class="text-gray-500 text-sm">Proficiency</span>
+          <span class="font-mono text-emerald text-sm skill-label" data-target="85">0%</span>
+        </div>
+        <div class="h-2 bg-charcoal-3 rounded-full overflow-hidden">
+          <div class="skill-bar-fill" data-width="85"></div>
+        </div>
+        <p class="text-gray-500 text-sm mt-4 leading-relaxed">
+          Merancang wireframe, prototyping interaktif, dan design system yang konsisten menggunakan Figma.
+        </p>
+      </div>
+
+      <!-- Skill Card 2 -->
+      <div class="bg-charcoal-2 border border-emerald/12 rounded-2xl p-8 hover:border-emerald/35 transition-all group"
+           data-aos="fade-up" data-aos-delay="200">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="w-12 h-12 rounded-xl bg-emerald/10 border border-emerald/25 flex items-center justify-center text-2xl group-hover:bg-emerald/20 transition-colors">💻</div>
+          <div>
+            <h3 class="font-display font-bold text-white">Web Developer</h3>
+            <p class="font-mono text-xs text-emerald">HTML · CSS · JS · Laravel</p>
+          </div>
+        </div>
+        <div class="mb-2 flex justify-between items-center">
+          <span class="text-gray-500 text-sm">Proficiency</span>
+          <span class="font-mono text-emerald text-sm skill-label" data-target="70">0%</span>
+        </div>
+        <div class="h-2 bg-charcoal-3 rounded-full overflow-hidden">
+          <div class="skill-bar-fill" data-width="70"></div>
+        </div>
+        <p class="text-gray-500 text-sm mt-4 leading-relaxed">
+          Membangun aplikasi web full-stack menggunakan Laravel, Next.js, dan integrasi IoT berbasis MQTT.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Additional tech -->
+    <div class="mt-12 text-center" data-aos="fade-up" data-aos-delay="400">
+      <p class="section-label mb-5">Teknologi Lain Yang Saya Gunakan</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <span class="bg-charcoal-3 border border-emerald/20 text-gray-400 font-mono text-xs px-4 py-2 rounded-full hover:border-emerald/50 hover:text-emerald transition-all">ESP32</span>
+        <span class="bg-charcoal-3 border border-emerald/20 text-gray-400 font-mono text-xs px-4 py-2 rounded-full hover:border-emerald/50 hover:text-emerald transition-all">MQTT</span>
+        <span class="bg-charcoal-3 border border-emerald/20 text-gray-400 font-mono text-xs px-4 py-2 rounded-full hover:border-emerald/50 hover:text-emerald transition-all">PostgreSQL</span>
+        <span class="bg-charcoal-3 border border-emerald/20 text-gray-400 font-mono text-xs px-4 py-2 rounded-full hover:border-emerald/50 hover:text-emerald transition-all">Git / GitHub</span>
+        <span class="bg-charcoal-3 border border-emerald/20 text-gray-400 font-mono text-xs px-4 py-2 rounded-full hover:border-emerald/50 hover:text-emerald transition-all">Tailwind CSS</span>
+        <span class="bg-charcoal-3 border border-emerald/20 text-gray-400 font-mono text-xs px-4 py-2 rounded-full hover:border-emerald/50 hover:text-emerald transition-all">Arduino IDE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ PROJECTS ════════════════════════════════════ -->
+<section id="projects" class="relative py-24 bg-charcoal-2">
+  <div class="mesh"></div>
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+
+    <div class="text-center mb-16" data-aos="fade-up">
+      <p class="section-label mb-3">// 03. Projects</p>
+      <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white">Proyek <span class="text-emerald">Saya</span></h2>
+      <div class="w-16 h-px bg-emerald mx-auto mt-4 rounded-full glow-em"></div>
+    </div>
+
+    <div class="grid md:grid-cols-1 gap-7 max-w-lg mx-auto">
+
+      <!-- Project: Redesign UI/UX E-Commerce -->
+      <div class="proj-card" data-aos="fade-up" data-aos-delay="100">
+        <div class="h-44 overflow-hidden relative">
+          <div class="proj-img w-full h-full bg-gradient-to-br from-mid-2 via-charcoal-3 to-charcoal flex items-center justify-center relative">
+            <div class="absolute inset-0 opacity-30" style="background: radial-gradient(circle at 60% 60%, #00c896 0%, transparent 70%)"></div>
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <rect x="12" y="12" width="24" height="56" rx="3" stroke="#00c896" stroke-width="1.5" fill="rgba(0,200,150,0.06)"/>
+              <rect x="44" y="24" width="24" height="44" rx="3" stroke="#00c896" stroke-width="1.5" fill="rgba(0,200,150,0.04)"/>
+              <circle cx="24" cy="28" r="6" fill="rgba(0,200,150,0.15)" stroke="#00c896" stroke-width="1"/>
+              <line x1="16" y1="40" x2="32" y2="40" stroke="#00c896" stroke-width="1" opacity="0.5"/>
+              <line x1="16" y1="47" x2="28" y2="47" stroke="#00c896" stroke-width="1" opacity="0.3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="flex gap-2 flex-wrap mb-3">
+            <span class="tag">Figma</span><span class="tag">UI/UX</span><span class="tag">Prototype</span>
+          </div>
+          <h3 class="font-display font-bold text-white text-lg mb-2">Redesign UI/UX E-Commerce</h3>
+          <p class="text-gray-500 text-sm leading-relaxed mb-5">
+            Revamp lengkap antarmuka platform e-commerce lokal dengan pendekatan human-centered design dan usability testing.
+          </p>
+          <div class="flex gap-3">
+            <a href="https://www.figma.com/proto/lM7UdhNgdx7QLPLB3Azcxn/Untitled?node-id=63-8616&p=f&t=rWXz3nZObpOCtSsy-1&scaling=scale-down&content-scaling=fixed&page-id=29%3A1252&starting-point-node-id=34%3A1350&show-proto-sidebar=1" target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-emerald hover:text-em-glow transition-colors">Live Prototype →</a>
+          </div>
+        </div>
+      </div>
+      
+
+    </div>
+    <div class="proj-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="h-44 overflow-hidden relative">
+          <div class="proj-img w-full h-full bg-gradient-to-br from-mid-2 via-charcoal-3 to-charcoal flex items-center justify-center relative">
+            <div class="absolute inset-0 opacity-30" style="background: radial-gradient(circle at 40% 40%, #00c896 0%, transparent 70%)"></div>
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <path d="M20 60V30" stroke="#00c896" stroke-width="2" stroke-linecap="round"/>
+              <path d="M40 60V20" stroke="#00c896" stroke-width="2" stroke-linecap="round"/>
+              <path d="M60 60V40" stroke="#00c896" stroke-width="2" stroke-linecap="round"/>
+              <path d="M15 60H65" stroke="#00c896" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="flex gap-2 flex-wrap mb-3">
+            <span class="tag">Vanilla JS</span><span class="tag">Chart.js</span><span class="tag">Dashboard</span>
+          </div>
+          <h3 class="font-display font-bold text-white text-lg mb-2">FinTrack Dashboard</h3>
+          <p class="text-gray-500 text-sm leading-relaxed mb-5">
+            Dashboard keuangan personal yang interaktif dengan integrasi Chart.js untuk visualisasi arus kas dan manajemen aset secara real-time.
+          </p>
+          <div class="flex gap-3">
+            <a href="https://mrbunya9-collab.github.io/2/" target="_blank" rel="noopener noreferrer" class="font-mono text-xs text-emerald hover:text-em-glow transition-colors">Live Demo →</a>
+          </div>
+        </div>
+      </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ CONTACT ════════════════════════════════════ -->
+<section id="contact" class="relative py-24 bg-charcoal overflow-hidden">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 100%,rgba(0,200,150,0.07) 0%,transparent 70%);pointer-events:none;"></div>
+  <div class="max-w-5xl mx-auto px-6 relative z-10">
+
+    <div class="text-center mb-16" data-aos="fade-up">
+      <p class="section-label mb-3">// 04. Contact</p>
+      <h2 class="font-display text-3xl md:text-4xl font-extrabold text-white">Mari <span class="text-emerald">Berkolaborasi</span></h2>
+      <p class="text-gray-500 mt-4 max-w-lg mx-auto">
+        Punya proyek menarik? Atau sekadar ingin berdiskusi soal teknologi dan inovasi?
+        Jangan ragu untuk menghubungi saya.
+      </p>
+      <div class="w-16 h-px bg-emerald mx-auto mt-4 rounded-full glow-em"></div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-12">
+
+      <!-- Info -->
+      <div data-aos="fade-right" data-aos-delay="100">
+        <h3 class="font-display font-bold text-white text-xl mb-6">Info Kontak</h3>
+
+        <div class="space-y-5">
+          <div class="flex items-center gap-4 group">
+            <div class="w-12 h-12 rounded-xl bg-emerald/10 border border-emerald/20 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-emerald/20 transition-colors">📧</div>
+            <div>
+              <p class="font-mono text-xs text-emerald mb-0.5">Email</p>
+              <a href="mailto:Mr.Bunya9@gmail.vom" class="text-gray-300 hover:text-emerald transition-colors font-display text-sm font-semibold">Mr.Bunya9@gmail.vom</a>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 group">
+            <div class="w-12 h-12 rounded-xl bg-emerald/10 border border-emerald/20 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-emerald/20 transition-colors">💬</div>
+            <div>
+              <p class="font-mono text-xs text-emerald mb-0.5">WhatsApp</p>
+              <a href="https://wa.me/6283190268537" target="_blank" class="text-gray-300 hover:text-emerald transition-colors font-display text-sm font-semibold">083190268537</a>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 group">
+            <div class="w-12 h-12 rounded-xl bg-emerald/10 border border-emerald/20 flex items-center justify-center text-xl flex-shrink-0 group-hover:bg-emerald/20 transition-colors">📍</div>
+            <div>
+              <p class="font-mono text-xs text-emerald mb-0.5">Lokasi</p>
+              <p class="text-gray-300 font-display text-sm font-semibold">Cilacap, Jawa Tengah</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-10 p-5 bg-charcoal-2 border border-emerald/15 rounded-2xl">
+          <p class="font-mono text-xs text-emerald mb-2">// Status</p>
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald animate-pulse"></span>
+            <p class="text-gray-300 text-sm font-display font-semibold">Tersedia untuk kolaborasi & proyek freelance</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div data-aos="fade-left" data-aos-delay="150">
+        <form id="contact-form" class="space-y-5" onsubmit="handleSubmit(event)">
+          <div>
+            <label class="font-mono text-xs text-emerald block mb-2">Nama Lengkap</label>
+            <input type="text" class="form-input" placeholder="John Doe" required/>
+          </div>
+          <div>
+            <label class="font-mono text-xs text-emerald block mb-2">Email</label>
+            <input type="email" class="form-input" placeholder="john@email.com" required/>
+          </div>
+          <div>
+            <label class="font-mono text-xs text-emerald block mb-2">Pesan</label>
+            <textarea class="form-input resize-none" rows="5" placeholder="Halo Zuhri, saya ingin berdiskusi tentang..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary w-full text-center justify-center" id="submit-btn">
+            Kirim Pesan ✉
+          </button>
+        </form>
+        <p id="form-success" class="hidden mt-4 text-center font-mono text-sm text-emerald">✅ Pesan terkirim! Saya akan segera menghubungi Anda.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════ FOOTER ════════════════════════════════════ -->
+<footer class="bg-charcoal-2 border-t border-emerald/10 py-8">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+    <p class="font-mono text-sm text-gray-600">© 2026 <span class="text-emerald">Zuhri Abdussalam Ashari</span>. All rights reserved.</p>
+    <p class="font-mono text-xs text-gray-600">Built with ❤ &amp; ☕ in Cilacap</p>
+    <div class="flex gap-5 text-sm">
+      <a href="#hero"     class="font-mono text-xs text-gray-600 hover:text-emerald transition-colors">#hero</a>
+      <a href="#about"    class="font-mono text-xs text-gray-600 hover:text-emerald transition-colors">#about</a>
+      <a href="#skills"   class="font-mono text-xs text-gray-600 hover:text-emerald transition-colors">#skills</a>
+      <a href="#projects" class="font-mono text-xs text-gray-600 hover:text-emerald transition-colors">#projects</a>
+      <a href="#contact"  class="font-mono text-xs text-gray-600 hover:text-emerald transition-colors">#contact</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ════════════════════════════════════ SCRIPTS ════════════════════════════════════ -->
+<script>
+// ── Cursor ──
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function animCursor(){
+  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+  rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+  ring.style.left = rx+'px'; ring.style.top = ry+'px';
+  requestAnimationFrame(animCursor);
+})();
+
+// ── Particles ──
+(function(){
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W,H,particles=[];
+
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
+
+  class Particle {
+    constructor(){this.reset();}
+    reset(){
+      this.x = Math.random()*W;
+      this.y = Math.random()*H;
+      this.r = Math.random()*1.2+0.3;
+      this.vx = (Math.random()-0.5)*0.35;
+      this.vy = (Math.random()-0.5)*0.35;
+      this.alpha = Math.random()*0.4+0.05;
+    }
+    update(){
+      this.x+=this.vx; this.y+=this.vy;
+      if(this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+    }
+    draw(){
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(0,200,150,${this.alpha})`;
+      ctx.fill();
+    }
+  }
+
+  for(let i=0;i<80;i++) particles.push(new Particle());
+
+  // Connection lines
+  function drawLines(){
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x;
+        const dy=particles[i].y-particles[j].y;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<130){
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle=`rgba(0,200,150,${0.12*(1-dist/130)})`;
+          ctx.lineWidth=0.6;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{p.update();p.draw();});
+    drawLines();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ── Typing animation ──
+(function(){
+  const el = document.getElementById('typed-name');
+  const text = 'Zuhri Abdussalam Ashari';
+  let i=0;
+  function type(){
+    if(i<text.length){ el.textContent=text.slice(0,++i); setTimeout(type, i===1?500:55); }
+  }
+  setTimeout(type, 900);
+})();
+
+// ── AOS init ──
+AOS.init({ duration:700, easing:'ease-out-cubic', once:true, offset:60 });
+
+// ── Skill bars (IntersectionObserver) ──
+(function(){
+  const fills  = document.querySelectorAll('.skill-bar-fill');
+  const labels = document.querySelectorAll('.skill-label');
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      fills.forEach(f=>{
+        f.style.width = f.dataset.width+'%';
+      });
+      labels.forEach(l=>{
+        const target = parseInt(l.dataset.target);
+        let current=0;
+        const step = () => {
+          if(current<target){ current++; l.textContent=current+'%'; requestAnimationFrame(step); }
+        };
+        step();
+      });
+      obs.disconnect();
+    });
+  }, {threshold:0.3});
+  const section = document.getElementById('skills');
+  if(section) obs.observe(section);
+})();
+
+// ── Hamburger ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+hamburger.addEventListener('click', ()=> mobileMenu.classList.toggle('open'));
+function closeMobile(){ mobileMenu.classList.remove('open'); }
+
+// ── Contact form ──
+function handleSubmit(e){
+  e.preventDefault();
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Mengirim...';
+  btn.disabled = true;
+  setTimeout(()=>{
+    document.getElementById('contact-form').classList.add('hidden');
+    document.getElementById('form-success').classList.remove('hidden');
+  }, 1200);
+}
+
+// ── Navbar active on scroll ──
+const sections = document.querySelectorAll('section[id]');
+const navLinks  = document.querySelectorAll('nav a[href^="#"]');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{ if(window.scrollY>=s.offsetTop-120) current=s.id; });
+  navLinks.forEach(a=>{
+    a.classList.remove('text-emerald');
+    if(a.getAttribute('href')==='#'+current) a.classList.add('text-emerald');
+  });
+});
+</script>
+
+</body>
+</html>
